@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require('../database/services/users');
+const ERRORS = require('../errors');
 
 function generateToken(user) { return jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1w' }); }
 
@@ -12,7 +13,7 @@ const UsersController = {
       if (!req.body.username || !req.body.password) {
         return res.status(400).send({
           success: false,
-          message: 'username or password can not be empty',
+          message: ERRORS.LOGIN_ERROR,
         });
       }
 
@@ -47,7 +48,7 @@ const UsersController = {
     } catch (err) {
       return res.status(500).send({
         success: false,
-        message: 'login failed.',
+        message: ERRORS.LOGIN_ERROR,
       });
     }
   },

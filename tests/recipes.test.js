@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const app = require('../app');
 const Users = require('../database/models/users');
 const mongoose = require('../database/dbConection');
+const ERRORS = require('../errors');
 let recipeId;
 let userToken;
 
@@ -28,7 +29,8 @@ describe('Test the recipes API', () => {
 
   describe('[POST] /login', () => {
     it('Authenticazes User and sign them in', async () => {
-      const { body, statusCode } = await $http.post('/login').send(userCredentials);
+      const { body, statusCode } = await $http.post('/login')
+        .send(userCredentials);
 
       userToken = body.accessToken;
       expect(statusCode).toEqual(200);
@@ -36,10 +38,24 @@ describe('Test the recipes API', () => {
         expect.objectContaining({
           accessToken: body.accessToken,
           success: true,
-          data: expect.objectContaining({
-            ...body.data
-          }),
+          data: expect.objectContaining({ ...body.data }),
         }),
+      );
+    });
+
+    it('Fails when password is empty', async () => {
+      const { body, statusCode } = await $http.post('/login')
+        .send({
+          ...userCredentials,
+          password: null,
+        });
+      
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.LOGIN_ERROR
+        })
       );
     });
   });

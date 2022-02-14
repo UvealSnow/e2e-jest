@@ -53,7 +53,7 @@ describe('Test the recipes API', () => {
       );
     });
 
-    it('Fails when password is empty', async () => {
+    it('Should fail when password is empty', async () => {
       const { body, statusCode } = await $http.post('/login')
         .send({
           ...userCredentials,
@@ -69,23 +69,52 @@ describe('Test the recipes API', () => {
       );
     });
 
+    it('Should fail if no User with such username is found', async () => {
+      const { body, statusCode } = await $http.post('/login')
+        .send({
+          ...userCredentials,
+          username: 'asd',
+        });
+        
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_CREDENTIALS
+        }),
+      );
+    });
+
+    it('Should fail if password does not match', async () => {
+      const { body, statusCode } = await $http.post('/login')
+        .send({
+          ...userCredentials,
+          password: 'asd',
+        });
+        
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_CREDENTIALS
+        }),
+      );
+    });
+
     it('Should catch if there is an error finding the User', async () => {
       jest.spyOn(UserService, 'findByUsername')
         .mockRejectedValueOnce(new Error());
 
       const { body, statusCode } = await $http.post('/login')
-        .send({
-          ...userCredentials,
-          password: null,
-        });
+        .send({ ...userCredentials });
         
-        expect(statusCode).toEqual(400);
-        expect(body).toEqual(
-          expect.objectContaining({
-            success: false,
-            message: ERRORS.LOGIN_ERROR
-          }),
-        );
+      expect(statusCode).toEqual(500);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.LOGIN_ERROR
+        }),
+      );
     });
   });
 

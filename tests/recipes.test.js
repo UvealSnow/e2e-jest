@@ -59,4 +59,28 @@ describe('Test the recipes API', () => {
       );
     });
   });
+
+  describe('[POST] /recipes', () => {
+    it('Creates a new Recipe from valid data', async () => {
+      const recipe = {
+        name: 'Beef Stroganoff',
+        difficulty: 2,
+        vegetarian: false,
+      };
+
+      const { body, statusCode } = await $http.post('/recipes')
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(201);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: true, 
+          data: expect.any(Object),
+        }),
+      );
+
+      recipeId = body.data._id;
+    });
+  });
 });

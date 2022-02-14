@@ -15,7 +15,7 @@ const RecipesController = {
     } catch (err) {
       return res.status(500).send({
         success: false,
-        message: 'Some error occurred while retrieving recipes.',
+        message: ERRORS.UNKNOWN,
       });
     }
   },
@@ -68,7 +68,7 @@ const RecipesController = {
     } catch (err) {
       return res.status(500).send({
         success: false,
-        message: 'Failed to save recipes!',
+        message: ERRORS.UNKNOWN,
       });
     }
   },
@@ -94,7 +94,7 @@ const RecipesController = {
     } catch (err) {
       return res.status(500).send({
         success: false,
-        message: 'Some error occurred while retrieving recipe details.',
+        message: ERRORS.UNKNOWN,
       });
     }
   },
@@ -155,7 +155,7 @@ const RecipesController = {
     } catch (err) {
       return res.status(500).send({
         success: false,
-        message: 'An error occured while updating recipe',
+        message: ERRORS.UNKNOWN,
       });
     }
   },

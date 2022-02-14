@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-undef */
 const request = require('supertest');
 const bcrypt = require('bcrypt');
 const app = require('../app');
@@ -7,6 +9,7 @@ const RecipeService = require('../database/services/recipes');
 const mongoose = require('../database/dbConection');
 const ERRORS = require('../errors');
 const MESSAGES = require('../messages');
+
 let recipeId;
 let userToken;
 
@@ -24,7 +27,7 @@ const recipeFactory = (modifications = {}) => ({
 });
 
 describe('Test the recipes API', () => {
-  beforeAll(async ()  => {
+  beforeAll(async () => {
     const password = bcrypt.hashSync('secret', 10);
     await Users.create({
       username: 'admin',
@@ -59,7 +62,7 @@ describe('Test the recipes API', () => {
           ...userCredentials,
           password: null,
         });
-      
+
       expect(statusCode).toEqual(400);
       expect(body).toEqual(
         expect.objectContaining({
@@ -75,12 +78,12 @@ describe('Test the recipes API', () => {
           ...userCredentials,
           username: 'asd',
         });
-        
+
       expect(statusCode).toEqual(400);
       expect(body).toEqual(
         expect.objectContaining({
           success: false,
-          message: ERRORS.INVALID_CREDENTIALS
+          message: ERRORS.INVALID_CREDENTIALS,
         }),
       );
     });
@@ -91,12 +94,12 @@ describe('Test the recipes API', () => {
           ...userCredentials,
           password: 'asd',
         });
-        
+
       expect(statusCode).toEqual(400);
       expect(body).toEqual(
         expect.objectContaining({
           success: false,
-          message: ERRORS.INVALID_CREDENTIALS
+          message: ERRORS.INVALID_CREDENTIALS,
         }),
       );
     });
@@ -107,12 +110,12 @@ describe('Test the recipes API', () => {
 
       const { body, statusCode } = await $http.post('/login')
         .send({ ...userCredentials });
-        
+
       expect(statusCode).toEqual(500);
       expect(body).toEqual(
         expect.objectContaining({
           success: false,
-          message: ERRORS.LOGIN_ERROR
+          message: ERRORS.LOGIN_ERROR,
         }),
       );
     });
@@ -209,13 +212,13 @@ describe('Test the recipes API', () => {
         .send(recipeFactory())
         .set('Authorization', `Bearer ${userToken}`);
 
-        expect(statusCode).toEqual(500);
-        expect(body).toEqual(
-          expect.objectContaining({
-            success: false,
-            message: ERRORS.UNKNOWN,
-          }),
-        );
+      expect(statusCode).toEqual(500);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.UNKNOWN,
+        }),
+      );
     });
   });
 
@@ -239,13 +242,13 @@ describe('Test the recipes API', () => {
         .send(recipeFactory())
         .set('Authorization', `Bearer ${userToken}`);
 
-        expect(statusCode).toEqual(500);
-        expect(body).toEqual(
-          expect.objectContaining({
-            success: false,
-            message: ERRORS.UNKNOWN,
-          }),
-        );
+      expect(statusCode).toEqual(500);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.UNKNOWN,
+        }),
+      );
     });
   });
 
@@ -282,13 +285,13 @@ describe('Test the recipes API', () => {
         .send(recipeFactory())
         .set('Authorization', `Bearer ${userToken}`);
 
-        expect(statusCode).toEqual(500);
-        expect(body).toEqual(
-          expect.objectContaining({
-            success: false,
-            message: ERRORS.UNKNOWN,
-          }),
-        );
+      expect(statusCode).toEqual(500);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.UNKNOWN,
+        }),
+      );
     });
   });
 
@@ -413,13 +416,13 @@ describe('Test the recipes API', () => {
         .send(recipeFactory())
         .set('Authorization', `Bearer ${userToken}`);
 
-        expect(statusCode).toEqual(500);
-        expect(body).toEqual(
-          expect.objectContaining({
-            success: false,
-            message: ERRORS.UNKNOWN,
-          }),
-        );
+      expect(statusCode).toEqual(500);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.UNKNOWN,
+        }),
+      );
     });
   });
 

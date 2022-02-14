@@ -12,10 +12,6 @@
     "test": "cross-env DATABASE_URI=mongobg://localhost:27017/recipe_app_test jest --collectCoverage --forceExit --detectOpenHandles",
     "prepare": "husky install"
   },
-  "pre-push": [
-    "lint",
-    "test"
-  ],
   "jest": {
     "testEnvironment": "node"
   },

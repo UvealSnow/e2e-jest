@@ -4,7 +4,7 @@ const app = require('../app');
 const Users = require('../database/models/users');
 const mongoose = require('../database/dbConection');
 const ERRORS = require('../errors');
-const { send } = require('express/lib/response');
+const MESSAGES = require('../messages');
 let recipeId;
 let userToken;
 
@@ -295,6 +295,59 @@ describe('Test the recipes API', () => {
     it('Should not update Recipe if User is not authenticated', async () => {
       const { body, statusCode } = await $http.patch(`/recipes/${recipeId}`)
         .send(recipeFactory());
+
+      expect(statusCode).toEqual(403);
+      expect(body).toEqual(
+        expect.objectContaining({
+          message: ERRORS.NOT_AUTHENTICATED,
+        }),
+      );
+    });
+  });
+
+  describe('[DELETE] /recipes/:id', () => {
+    it('Should delete the specified Recipe', async () => {
+      const { body, statusCode } = await $http.delete(`/recipes/${recipeId}`)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(200);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: true,
+          message: MESSAGES.RECIPE_DELETED,
+        }),
+      );
+    });
+
+    it('Should NOT fail if the Recipe does not exist', async () => {
+      const { body, statusCode } = await $http.delete(`/recipes/${recipeId}`)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(200);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: true,
+          message: MESSAGES.RECIPE_DELETED,
+        }),
+      );
+    });
+
+    it('Should NOT delete the Recipe if ID is invalid', async () => {
+      const id = 'asd';
+      const { body, statusCode } = await $http.delete(`/recipes/${id}`)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(500);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.UNKNOWN,
+        }),
+      );
+    });
+
+    it('Should NOT delete the Recipe if User is not authenticated', async () => {
+      const { body, statusCode } = await $http.delete(`/recipes/${recipeId}`);
 
       expect(statusCode).toEqual(403);
       expect(body).toEqual(

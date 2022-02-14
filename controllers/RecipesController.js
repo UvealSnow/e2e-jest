@@ -1,5 +1,6 @@
 const Recipes = require('../database/services/recipes');
 const ERRORS = require('../errors');
+const MESSAGES = require('../messages');
 
 const RecipesController = {
   // Retrieve and return all recipes from the database.
@@ -170,12 +171,12 @@ const RecipesController = {
 
       return res.status(200).send({
         success: true,
-        message: 'Recipe successfully deleted',
+        message: MESSAGES.RECIPE_DELETED,
       });
     } catch (err) {
       return res.status(500).send({
         success: false,
-        message: 'An error occured while deleting recipe',
+        message: ERRORS.UNKNOWN,
       });
     }
   },

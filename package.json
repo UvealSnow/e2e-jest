@@ -9,9 +9,13 @@
     "lint": "eslint ./",
     "seed": "node database/seed/index",
     "seed:rollback": "node database/seed/index --rollback",
-    "test": "cross-env DATABASE_URI=mongobg://localhost:27017/recipe_app_test jest --collectCoverage --forceExit --detectOpenHandles"
+    "test": "cross-env DATABASE_URI=mongobg://localhost:27017/recipe_app_test jest --collectCoverage --forceExit --detectOpenHandles",
+    "prepare": "husky install"
   },
-  "pre-push": ["lint", "test"],
+  "pre-push": [
+    "lint",
+    "test"
+  ],
   "jest": {
     "testEnvironment": "node"
   },
@@ -47,8 +51,8 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^7.0.0",
     "jest": "^27.4.7",
-    "pre-push": "^0.1.1",
     "supertest": "^6.2.2"
   }
 }

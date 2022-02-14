@@ -106,7 +106,15 @@ const RecipesController = {
       if (Object.keys(req.body).length === 0) {
         return res.status(400).send({
           success: false,
-          message: 'field should not be empty',
+          message: ERRORS.INVALID_INPUT,
+        });
+      }
+
+      // validate name
+      if (!req.body.name) {
+        return res.status(400).send({
+          success: false,
+          message: ERRORS.INVALID_NAME,
         });
       }
 
@@ -114,14 +122,14 @@ const RecipesController = {
       if ((req.body.difficulty) && ((typeof req.body.difficulty !== 'number') || (req.body.difficulty <= 0) || (req.body.difficulty > 3))) {
         return res.status(400).send({
           success: false,
-          message: 'difficulty field should be a number',
+          message: ERRORS.INVALID_DIFFICULTY,
         });
       }
       // validate vegetarian if it exist
       if ((req.body.vegetarian) && (typeof req.body.vegetarian !== 'boolean')) {
         return res.status(400).send({
           success: false,
-          message: 'vegetarian field should be boolean',
+          message: ERRORS.INVALID_VEGETARIAN,
         });
       }
 
@@ -130,9 +138,9 @@ const RecipesController = {
       // check if recipe exist
       const recipeExist = await Recipes.fetchById(id);
       if (!recipeExist) {
-        return res.status(400).send({
+        return res.status(404).send({
           success: false,
-          message: `Recipe with id ${id} does not exist`,
+          message: ERRORS.NOT_FOUND(id),
         });
       }
 

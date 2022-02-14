@@ -4,6 +4,7 @@ const app = require('../app');
 const Users = require('../database/models/users');
 const mongoose = require('../database/dbConection');
 const ERRORS = require('../errors');
+const { send } = require('express/lib/response');
 let recipeId;
 let userToken;
 
@@ -138,7 +139,7 @@ describe('Test the recipes API', () => {
       );
     });
 
-    it('Should not create Recipe if difficulty is not an int in 1..3 range', async () => {
+    it('Should not create Recipe if User is not authenticated', async () => {
       const { body, statusCode } = await $http.post('/recipes')
         .send(recipeFactory());
 
@@ -185,6 +186,120 @@ describe('Test the recipes API', () => {
         expect.objectContaining({
           success: false,
           message: ERRORS.NOT_FOUND(invalidId),
+        }),
+      );
+    });
+  });
+
+  describe('[PATCH] /recipes/:id', () => {
+    it('Should update the specified Recipe in the DB', async () => {
+      const recipe = recipeFactory();
+      const { body, statusCode } = await $http.patch(`/recipes/${recipeId}`)
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(200);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: true,
+          data: expect.any(Object),
+        }),
+      );
+    });
+
+    it('Should not update Recipe if no data is given', async () => {
+      const { body, statusCode } = await $http.patch(`/recipes/${recipeId}`)
+        .send({})
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_INPUT,
+        }),
+      );
+    });
+
+    it('Should not update Recipe if vegetarian is not Boolean', async () => {
+      const recipe = recipeFactory({
+        vegetarian: 'false',
+      });
+
+      const { body, statusCode } = await $http.patch(`/recipes/${recipeId}`)
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_VEGETARIAN,
+        }),
+      );
+    });
+
+    it('Should not update Recipe if name is empty', async () => {
+      const recipe = recipeFactory({
+        name: '',
+      });
+
+      const { body, statusCode } = await $http.patch(`/recipes/${recipeId}`)
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_NAME,
+        }),
+      );
+    });
+
+    it('Should not update Recipe if difficulty is not an int in 1..3 range', async () => {
+      const recipe = recipeFactory({
+        difficulty: 55,
+      });
+
+      const { body, statusCode } = await $http.patch(`/recipes/${recipeId}`)
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_DIFFICULTY,
+        }),
+      );
+    });
+
+    it('Should not update Recipe if an invalid ID is given', async () => {
+      const id = 'asd';
+      const recipe = recipeFactory();
+
+      const { body, statusCode } = await $http.patch(`/recipes/${id}`)
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(404);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.NOT_FOUND(id),
+        }),
+      );
+    });
+
+    it('Should not update Recipe if User is not authenticated', async () => {
+      const { body, statusCode } = await $http.patch(`/recipes/${recipeId}`)
+        .send(recipeFactory());
+
+      expect(statusCode).toEqual(403);
+      expect(body).toEqual(
+        expect.objectContaining({
+          message: ERRORS.NOT_AUTHENTICATED,
         }),
       );
     });

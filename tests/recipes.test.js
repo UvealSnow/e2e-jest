@@ -137,5 +137,17 @@ describe('Test the recipes API', () => {
         }),
       );
     });
+
+    it('Should not create Recipe if difficulty is not an int in 1..3 range', async () => {
+      const { body, statusCode } = await $http.post('/recipes')
+        .send(recipeFactory());
+
+      expect(statusCode).toEqual(403);
+      expect(body).toEqual(
+        expect.objectContaining({
+          message: ERRORS.NOT_AUTHENTICATED,
+        }),
+      );
+    });
   });
 });

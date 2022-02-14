@@ -2,6 +2,8 @@ const request = require('supertest');
 const bcrypt = require('bcrypt');
 const app = require('../app');
 const Users = require('../database/models/users');
+const UserService = require('../database/services/users');
+const RecipeService = require('../database/services/recipes');
 const mongoose = require('../database/dbConection');
 const ERRORS = require('../errors');
 const MESSAGES = require('../messages');
@@ -62,9 +64,28 @@ describe('Test the recipes API', () => {
       expect(body).toEqual(
         expect.objectContaining({
           success: false,
-          message: ERRORS.LOGIN_ERROR
-        })
+          message: ERRORS.LOGIN_ERROR,
+        }),
       );
+    });
+
+    it('Should catch if there is an error finding the User', async () => {
+      jest.spyOn(UserService, 'findByUsername')
+        .mockRejectedValueOnce(new Error());
+
+      const { body, statusCode } = await $http.post('/login')
+        .send({
+          ...userCredentials,
+          password: null,
+        });
+        
+        expect(statusCode).toEqual(400);
+        expect(body).toEqual(
+          expect.objectContaining({
+            success: false,
+            message: ERRORS.LOGIN_ERROR
+          }),
+        );
     });
   });
 
@@ -150,6 +171,23 @@ describe('Test the recipes API', () => {
         }),
       );
     });
+
+    it('Should catch if there is an error saving the Recipe', async () => {
+      jest.spyOn(RecipeService, 'saveRecipes')
+        .mockRejectedValueOnce(new Error());
+
+      const { body, statusCode } = await $http.post('/recipes')
+        .send(recipeFactory())
+        .set('Authorization', `Bearer ${userToken}`);
+
+        expect(statusCode).toEqual(500);
+        expect(body).toEqual(
+          expect.objectContaining({
+            success: false,
+            message: ERRORS.UNKNOWN,
+          }),
+        );
+    });
   });
 
   describe('[GET] /recipes', () => {
@@ -162,6 +200,23 @@ describe('Test the recipes API', () => {
           data: expect.any(Array),
         }),
       );
+    });
+
+    it('Should catch if there is an error fetching the Recipes', async () => {
+      jest.spyOn(RecipeService, 'allRecipes')
+        .mockRejectedValueOnce(new Error());
+
+      const { body, statusCode } = await $http.get('/recipes')
+        .send(recipeFactory())
+        .set('Authorization', `Bearer ${userToken}`);
+
+        expect(statusCode).toEqual(500);
+        expect(body).toEqual(
+          expect.objectContaining({
+            success: false,
+            message: ERRORS.UNKNOWN,
+          }),
+        );
     });
   });
 
@@ -188,6 +243,23 @@ describe('Test the recipes API', () => {
           message: ERRORS.NOT_FOUND(invalidId),
         }),
       );
+    });
+
+    it('Should catch if there is an error fetching the specified Recipe', async () => {
+      jest.spyOn(RecipeService, 'fetchById')
+        .mockRejectedValueOnce(new Error());
+
+      const { body, statusCode } = await $http.get(`/recipes/${recipeId}`)
+        .send(recipeFactory())
+        .set('Authorization', `Bearer ${userToken}`);
+
+        expect(statusCode).toEqual(500);
+        expect(body).toEqual(
+          expect.objectContaining({
+            success: false,
+            message: ERRORS.UNKNOWN,
+          }),
+        );
     });
   });
 
@@ -302,6 +374,23 @@ describe('Test the recipes API', () => {
           message: ERRORS.NOT_AUTHENTICATED,
         }),
       );
+    });
+
+    it('Should catch if there is an error updating the specified Recipe', async () => {
+      jest.spyOn(RecipeService, 'fetchByIdAndUpdate')
+        .mockRejectedValueOnce(new Error());
+
+      const { body, statusCode } = await $http.patch(`/recipes/${recipeId}`)
+        .send(recipeFactory())
+        .set('Authorization', `Bearer ${userToken}`);
+
+        expect(statusCode).toEqual(500);
+        expect(body).toEqual(
+          expect.objectContaining({
+            success: false,
+            message: ERRORS.UNKNOWN,
+          }),
+        );
     });
   });
 

@@ -1,4 +1,5 @@
 const Recipes = require('../database/services/recipes');
+const ERRORS = require('../errors');
 
 const RecipesController = {
   // Retrieve and return all recipes from the database.
@@ -31,14 +32,14 @@ const RecipesController = {
       if (typeof vegetarian !== 'boolean') {
         return res.status(400).send({
           success: false,
-          message: 'vegetarian field should be boolean',
+          message: ERRORS.INVALID_VEGETARIAN,
         });
       }
       // validate name
       if (!req.body.name) {
         return res.status(400).send({
           success: false,
-          message: 'name field can not be empty',
+          message: ERRORS.INVALID_NAME,
         });
       }
 
@@ -46,7 +47,7 @@ const RecipesController = {
       if ((typeof difficulty !== 'number') || (difficulty <= 0) || (difficulty > 3)) {
         return res.status(400).send({
           success: false,
-          message: 'difficulty field should be a number',
+          message: ERRORS.INVALID_DIFFICULTY,
         });
       }
 

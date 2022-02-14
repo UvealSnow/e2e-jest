@@ -21,7 +21,7 @@ const UsersController = {
       if (!findUser) {
         return res.status(400).send({
           success: false,
-          message: 'Incorrect username or password',
+          message: ERRORS.INVALID_CREDENTIALS,
         });
       }
 
@@ -29,7 +29,7 @@ const UsersController = {
       if (!confirmPassword) {
         return res.status(400).send({
           success: false,
-          message: 'Incorrect username or password',
+          message: ERRORS.INVALID_CREDENTIALS,
         });
       }
 

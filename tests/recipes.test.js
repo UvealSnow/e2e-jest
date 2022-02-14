@@ -13,6 +13,13 @@ const userCredentials = {
   password: 'secret',
 };
 
+const recipeFactory = (modifications = {}) => ({
+  name: 'Beef Stroganoff',
+  difficulty: 2,
+  vegetarian: false,
+  ...modifications,
+});
+
 describe('Test the recipes API', () => {
   beforeAll(async ()  => {
     const password = bcrypt.hashSync('secret', 10);
@@ -62,25 +69,73 @@ describe('Test the recipes API', () => {
 
   describe('[POST] /recipes', () => {
     it('Creates a new Recipe from valid data', async () => {
-      const recipe = {
-        name: 'Beef Stroganoff',
-        difficulty: 2,
-        vegetarian: false,
-      };
-
       const { body, statusCode } = await $http.post('/recipes')
-        .send(recipe)
+        .send(recipeFactory())
         .set('Authorization', `Bearer ${userToken}`);
 
       expect(statusCode).toEqual(201);
       expect(body).toEqual(
         expect.objectContaining({
-          success: true, 
+          success: true,
           data: expect.any(Object),
         }),
       );
 
       recipeId = body.data._id;
+    });
+
+    it('Should not create Recipe if vegetarian is not Boolean', async () => {
+      const recipe = recipeFactory({
+        vegetarian: 'false',
+      });
+
+      const { body, statusCode } = await $http.post('/recipes')
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_VEGETARIAN,
+        }),
+      );
+    });
+
+    it('Should not create Recipe if name is empty', async () => {
+      const recipe = recipeFactory({
+        name: undefined,
+      });
+
+      const { body, statusCode } = await $http.post('/recipes')
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_NAME,
+        }),
+      );
+    });
+
+    it('Should not create Recipe if difficulty is not an int in 1..3 range', async () => {
+      const recipe = recipeFactory({
+        difficulty: 55,
+      });
+
+      const { body, statusCode } = await $http.post('/recipes')
+        .send(recipe)
+        .set('Authorization', `Bearer ${userToken}`);
+
+      expect(statusCode).toEqual(400);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.INVALID_DIFFICULTY,
+        }),
+      );
     });
   });
 });

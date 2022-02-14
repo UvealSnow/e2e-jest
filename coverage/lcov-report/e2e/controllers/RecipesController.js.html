@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">32.65% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>12/48</span>
+                <span class='fraction'>16/49</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">24% </span>
+                <span class="strong">36% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>6/25</span>
+                <span class='fraction'>9/25</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">32.65% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>12/48</span>
+                <span class='fraction'>16/49</span>
             </div>
         
             
@@ -238,7 +238,9 @@
 <a name='L173'></a><a href='#L173'>173</a>
 <a name='L174'></a><a href='#L174'>174</a>
 <a name='L175'></a><a href='#L175'>175</a>
-<a name='L176'></a><a href='#L176'>176</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L176'></a><a href='#L176'>176</a>
+<a name='L177'></a><a href='#L177'>177</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -260,31 +262,31 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -414,6 +416,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const Recipes = require('../database/services/recipes');
+const ERRORS = require('../errors');
 &nbsp;
 const RecipesController = {
   // Retrieve and return all recipes from the database.
@@ -443,25 +446,25 @@ const RecipesController = {
       } = req.body;
 &nbsp;
       // validate vegetarian
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (typeof vegetarian !== 'boolean') {
-<span class="cstat-no" title="statement not covered" >        return res.status(400).send({</span>
+      if (typeof vegetarian !== 'boolean') {
+        return res.status(400).send({
           success: false,
-          message: 'vegetarian field should be boolean',
+          message: ERRORS.INVALID_VEGETARIAN,
         });
       }
       // validate name
-      <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.body.name) {
-<span class="cstat-no" title="statement not covered" >        return res.status(400).send({</span>
+      if (!req.body.name) {
+        return res.status(400).send({
           success: false,
-          message: 'name field can not be empty',
+          message: ERRORS.INVALID_NAME,
         });
       }
 &nbsp;
       // validate difficulty
-      <span class="missing-if-branch" title="if path not taken" >I</span>if ((typeof difficulty !== 'number') || (difficulty &lt;= 0) || (difficulty &gt; 3)) {
-<span class="cstat-no" title="statement not covered" >        return res.status(400).send({</span>
+      if ((typeof difficulty !== 'number') || (difficulty &lt;= 0) || (difficulty &gt; 3)) {
+        return res.status(400).send({
           success: false,
-          message: 'difficulty field should be a number',
+          message: ERRORS.INVALID_DIFFICULTY,
         });
       }
 &nbsp;
@@ -595,7 +598,7 @@ module.exports = RecipesController;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Mon Feb 14 2022 10:04:02 GMT+0100 (Central European Standard Time)
+                at Mon Feb 14 2022 13:01:21 GMT+0100 (Central European Standard Time)
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -150,4 +150,43 @@ describe('Test the recipes API', () => {
       );
     });
   });
+
+  describe('[GET] /recipes', () => {
+    it('Should retrieve all the Recipes in the DB', async () => {
+      const { body, statusCode } = await $http.get('/recipes');
+      expect(statusCode).toEqual(200);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: true,
+          data: expect.any(Array),
+        }),
+      );
+    });
+  });
+
+  describe('[GET] /recipes/:id', () => {
+    it('Should retrieve the specified Recipe from the DB', async () => {
+      const { body, statusCode } = await $http.get(`/recipes/${recipeId}`);
+      expect(statusCode).toEqual(200);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: true,
+          data: expect.any(Object),
+        }),
+      );
+    });
+
+    it('Should not retrieve the specified Recipe from the DB if given an invalid ID', async () => {
+      const invalidId = 'asd';
+      const { body, statusCode } = await $http.get(`/recipes/${invalidId}`);
+
+      expect(statusCode).toEqual(404);
+      expect(body).toEqual(
+        expect.objectContaining({
+          success: false,
+          message: ERRORS.NOT_FOUND(invalidId),
+        }),
+      );
+    });
+  });
 });

@@ -80,9 +80,9 @@ const RecipesController = {
       // retrive recipes info
       const recipes = await Recipes.fetchById(id);
       if (!recipes) {
-        return res.status(400).send({
+        return res.status(404).send({
           success: false,
-          message: `Recipe with id ${id} does not exist`,
+          message: ERRORS.NOT_FOUND(id),
         });
       }
 
